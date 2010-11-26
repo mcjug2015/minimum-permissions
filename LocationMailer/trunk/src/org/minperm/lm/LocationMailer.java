@@ -12,10 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Base code blantantly ripped off of http://hejp.co.uk/android/android-gps-example/
+ * Base code blantantly ripped off of
+ * http://hejp.co.uk/android/android-gps-example/
  * 
  * @author faldureon
- *
+ * 
  */
 public class LocationMailer extends Activity implements LocationListener {
 
@@ -35,7 +36,6 @@ public class LocationMailer extends Activity implements LocationListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 
 		/* get TextView to display the GPS data */
 		txtInfo = new TextView(this);
@@ -46,6 +46,7 @@ public class LocationMailer extends Activity implements LocationListener {
 		 */
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
 		setContentView(txtInfo);
+		sendEmail();
 	}
 
 	@Override
@@ -155,5 +156,31 @@ public class LocationMailer extends Activity implements LocationListener {
 		 */
 		finish();
 		super.onStop();
+	}
+
+	public void sendEmail() {
+		Mail m = new Mail("victor.semenov@gmail.com", "3rsheam5");
+
+		String[] toArr = { "victor.semenov@gmail.com" };
+		m.setTo(toArr);
+		m.setFrom("victor.semenov@gmail.com");
+		m.setSubject("Location Mailer Update.");
+		m.setBody("Phone's current location is: ");
+
+		try {
+
+			if (m.send()) {
+				Toast.makeText(this, "Email was sent successfully.",
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(this, "Email was not sent.", Toast.LENGTH_LONG)
+						.show();
+			}
+		} catch (Exception e) {
+			// Toast.makeText(MailApp.this,
+			// "There was a problem sending the email.",
+			// Toast.LENGTH_LONG).show();
+			Log.e("MailApp", "Could not send email", e);
+		}
 	}
 }
