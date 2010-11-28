@@ -1,5 +1,8 @@
 package org.minperm.lm;
 
+import org.minperm.lm.model.Mail;
+import org.minperm.lm.ui.SettingsView;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -45,8 +48,7 @@ public class LocationMailer extends Activity implements LocationListener {
 		 * location and GPS status services
 		 */
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		setContentView(txtInfo);
-		sendEmail();
+		setContentView(new SettingsView(this));
 	}
 
 	@Override

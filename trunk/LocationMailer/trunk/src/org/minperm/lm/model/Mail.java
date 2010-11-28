@@ -1,4 +1,4 @@
-package org.minperm.lm;
+package org.minperm.lm.model;
 
 import java.util.Date;
 import java.util.Properties;

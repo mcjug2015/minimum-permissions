@@ -3,4 +3,11 @@
     
     <string name="hello">Hello World, ApiDemos!</string>
     <string name="app_name">Location Mailer</string>
+<string name="sv_email_label_text">Email to send location updates to</string>
+<string name="sv_update_interval_label_text">Select update interval</string>
+<string name="sv_12_hours_rb_text">12 hours</string>
+<string name="sv_daily_rb_text">day</string>
+<string name="sv_weekly_rb_text">week</string>
+<string name="sv_interval_label_text">Send location update every: </string>
+<string name="sv_set_current_button_text">Save current settings</string>
 </resources>
