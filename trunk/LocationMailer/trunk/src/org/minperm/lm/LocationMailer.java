@@ -1,6 +1,8 @@
 package org.minperm.lm;
 
-import org.minperm.lm.model.Mail;
+import java.util.Timer;
+
+import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.ui.SettingsView;
 
 import android.app.Activity;
@@ -34,6 +36,7 @@ public class LocationMailer extends Activity implements LocationListener {
 	LocationManager lm;
 	StringBuilder sb;
 	int noOfFixes = 0;
+	Timer timer;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -48,6 +51,7 @@ public class LocationMailer extends Activity implements LocationListener {
 		 * location and GPS status services
 		 */
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+		LmContainer.getInstance().setLocation(getBestLocation());
 		setContentView(new SettingsView(this));
 	}
 
@@ -59,16 +63,16 @@ public class LocationMailer extends Activity implements LocationListener {
 		 * 
 		 * add location listener and request updates every 1000ms or 10m
 		 */
-		lm
-				.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-						10f, this);
+		// lm
+		// .requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
+		// 10f, this);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		/* GPS, as it turns out, consumes battery like crazy */
-		lm.removeUpdates(this);
+		// lm.removeUpdates(this);
 		super.onResume();
 	}
 
@@ -160,29 +164,16 @@ public class LocationMailer extends Activity implements LocationListener {
 		super.onStop();
 	}
 
-	public void sendEmail() {
-		Mail m = new Mail("victor.semenov@gmail.com", "3rsheam5");
-
-		String[] toArr = { "victor.semenov@gmail.com" };
-		m.setTo(toArr);
-		m.setFrom("victor.semenov@gmail.com");
-		m.setSubject("Location Mailer Update.");
-		m.setBody("Phone's current location is: ");
-
-		try {
-
-			if (m.send()) {
-				Toast.makeText(this, "Email was sent successfully.",
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(this, "Email was not sent.", Toast.LENGTH_LONG)
-						.show();
-			}
-		} catch (Exception e) {
-			// Toast.makeText(MailApp.this,
-			// "There was a problem sending the email.",
-			// Toast.LENGTH_LONG).show();
-			Log.e("MailApp", "Could not send email", e);
+	public Location getBestLocation() {
+		Location retval = null;
+		if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		} else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		} else if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 		}
+
+		return retval;
 	}
 }
