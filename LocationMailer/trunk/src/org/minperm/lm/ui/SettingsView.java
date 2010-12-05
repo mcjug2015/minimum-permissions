@@ -2,6 +2,7 @@ package org.minperm.lm.ui;
 
 import org.minperm.lm.R;
 import org.minperm.lm.model.LmContainer;
+import org.minperm.lm.model.action.MailAction;
 
 import android.content.Context;
 import android.view.View;
@@ -81,5 +82,7 @@ public class SettingsView extends LinearLayout {
 			LmContainer.getInstance().setUpdateInterval(
 					7 * 24 * 60 * 60 * 1000l);
 		}
+
+		new MailAction(getContext()).run();
 	}
 }

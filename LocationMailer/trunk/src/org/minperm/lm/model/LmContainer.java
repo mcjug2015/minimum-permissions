@@ -1,11 +1,15 @@
 package org.minperm.lm.model;
 
+import android.location.Location;
+
 public class LmContainer {
 	private long lastUpdateDate;
 	
 	private long updateInterval;
 	
 	private String updateEmailAddress;
+	
+	private Location location;
 	
 	private static LmContainer instance;
 	
@@ -44,5 +48,13 @@ public class LmContainer {
 
 	public void setUpdateEmailAddress(String updateEmailAddress) {
 		this.updateEmailAddress = updateEmailAddress;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 }
