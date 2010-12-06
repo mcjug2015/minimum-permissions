@@ -82,7 +82,5 @@ public class SettingsView extends LinearLayout {
 			LmContainer.getInstance().setUpdateInterval(
 					7 * 24 * 60 * 60 * 1000l);
 		}
-
-		new MailAction(getContext()).run();
 	}
 }
