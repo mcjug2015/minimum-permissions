@@ -6,6 +6,18 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:enabled="true" android:persistent="true" android:debuggable="true"
 		android:allowClearUserData="true">
+		<service android:name=".BootDemoService">
+            <intent-filter>
+                <action android:name="org.minperm.lm.BootDemoService">
+                </action>
+            </intent-filter>
+        </service>
+        <receiver android:name=".BootDemoReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED">
+                </action>
+            </intent-filter>
+        </receiver>
 		<activity android:screenOrientation="unspecified"
 			android:launchMode="standard" android:name="LocationMailer">
 			<intent-filter>
@@ -15,8 +27,7 @@
 		</activity>
 	</application>
 
-
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 </manifest> 

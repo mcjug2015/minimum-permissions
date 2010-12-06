@@ -6,20 +6,12 @@ import java.util.List;
 import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.Mail;
 
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 public class MailAction implements Runnable {
-	private Context context;
-
-	public MailAction(Context context) {
-		this.context = context;
-	}
-
 	@Override
 	public void run() {
 		Location location = LmContainer.getInstance().getLocation();
@@ -28,17 +20,10 @@ public class MailAction implements Runnable {
 		String[] toArr = { LmContainer.getInstance().getUpdateEmailAddress() };
 		m.setTo(toArr);
 		m.setFrom("victor.semenov@gmail.com");
-		m.setSubject("Location Mailer Update.");
+		m.setSubject("Location Mailer Update. " + System.currentTimeMillis());
 		m.setBody(getEmailBody(location));
 		try {
-
-			if (m.send()) {
-				Toast.makeText(context, "Email was sent successfully.",
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(context, "Email was not sent.",
-						Toast.LENGTH_LONG).show();
-			}
+			m.send();
 		} catch (Exception e) {
 			// Toast.makeText(MailApp.this,
 			// "There was a problem sending the email.",
@@ -58,7 +43,7 @@ public class MailAction implements Runnable {
 		bodySb.append("Longtitude: " + location.getLongitude() + "\n");
 		bodySb.append("Altitude: " + location.getAltitude() + "\n");
 		bodySb.append("Location accuracy: " + location.getAccuracy() + "\n");
-		Geocoder gc = new Geocoder(context);
+		Geocoder gc = null;
 		try {
 			List<Address> addresses = gc.getFromLocation(
 					location.getLatitude(), location.getLongitude(), 3);
