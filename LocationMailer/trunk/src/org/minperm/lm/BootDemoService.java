@@ -1,16 +1,17 @@
 package org.minperm.lm;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.minperm.lm.model.LmContainer;
+import org.minperm.lm.model.SettingsDao;
 import org.minperm.lm.model.action.MailAction;
 
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 import android.util.Log;
 
 /**
@@ -22,31 +23,21 @@ import android.util.Log;
  */
 public class BootDemoService extends Service {
 	/**
-	 * Delay until first exeution of the Log task.
-	 */
-	private final long mDelay = 0;
-	/**
-	 * Period of the Log task.
-	 */
-	private final long mPeriod = 60 * 1000;
-	/**
 	 * Log tag for this service.
 	 */
 	private final String LOGTAG = "BootDemoService";
-	/**
-	 * Timer to schedule the service.
-	 */
-	private Timer mTimer;
 
 	/**
-	 * Implementation of the timer task.
+	 * The function that runs in our worker thread
 	 */
-	private class LogTask extends TimerTask implements Runnable {
+	Runnable mTask = new Runnable() {
 		public void run() {
 			LmContainer.getInstance().setLocation(getBestLocation());
 			new MailAction().run();
+			// Done with our work... stop the service!
+			BootDemoService.this.stopSelf();
 		}
-	}
+	};
 
 	public Location getBestLocation() {
 		Location retval = null;
@@ -62,25 +53,29 @@ public class BootDemoService extends Service {
 		return retval;
 	}
 
-	private LogTask mLogTask;
-
 	@Override
-	public IBinder onBind(final Intent intent) {
-		return null;
+	public IBinder onBind(Intent intent) {
+		return mBinder;
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.i(LOGTAG, "created");
-		mTimer = new Timer();
-		mLogTask = new LogTask();
+		SettingsDao.getInstance().setContext(this);
+		Thread thr = new Thread(null, mTask, "AlarmService_Service");
+		thr.start();
 	}
 
-	@Override
-	public void onStart(final Intent intent, final int startId) {
-		super.onStart(intent, startId);
-		Log.i(LOGTAG, "started");
-		mTimer.schedule(mLogTask, mDelay, mPeriod);
-	}
+	/**
+	 * This is the object that receives interactions from clients. See
+	 * RemoteService for a more complete example.
+	 */
+	private final IBinder mBinder = new Binder() {
+		@Override
+		protected boolean onTransact(int code, Parcel data, Parcel reply,
+				int flags) throws RemoteException {
+			return super.onTransact(code, data, reply, flags);
+		}
+	};
 }
