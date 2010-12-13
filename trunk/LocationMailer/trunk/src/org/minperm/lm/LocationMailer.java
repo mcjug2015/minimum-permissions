@@ -1,10 +1,13 @@
 package org.minperm.lm;
 
+import java.io.FileNotFoundException;
+
+import org.minperm.lm.model.SettingsDao;
 import org.minperm.lm.ui.SettingsView;
 
 import android.app.Activity;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Base code blantantly ripped off of
@@ -14,20 +17,32 @@ import android.os.Bundle;
  * 
  */
 public class LocationMailer extends Activity {
-
-	/*
-	 * this class implements LocationListener, which listens for both changes in
-	 * the location of the device and changes in the status of the GPS system.
-	 */
-
-	static final String tag = "Main"; // for Log
-	LocationManager lm;
+	SettingsView settingsView;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(new SettingsView(this));
+		SettingsDao.getInstance().setContext(this);
+		settingsView = new SettingsView(this);
+		setContentView(settingsView);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		try {
+			settingsView.saveCurrentToContainer();
+		} catch (FileNotFoundException e) {
+			Log.e("LM main activity: ", "Error saving settings "
+					+ e.getMessage() + e.getStackTrace().toString());
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		settingsView.updateFromLmContainer();
 	}
 
 	@Override

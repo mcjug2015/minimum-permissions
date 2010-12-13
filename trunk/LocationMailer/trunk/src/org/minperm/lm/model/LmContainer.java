@@ -4,25 +4,25 @@ import android.location.Location;
 
 public class LmContainer {
 	private long lastUpdateDate;
-	
+
 	private long updateInterval;
-	
+
 	private String updateEmailAddress;
-	
+
 	private Location location;
-	
+
 	private static LmContainer instance;
-	
-	private LmContainer(){
-		
+
+	LmContainer() {
+
 	}
-	
-	public static LmContainer getInstance(){
-		if (instance == null){
-			instance = new LmContainer();
+
+	public static LmContainer getInstance() {
+		if (instance == null) {
+			instance = SettingsDao.getInstance().getLmContainer();
 			instance.setUpdateEmailAddress("victor.semenov@gmail.com");
 		}
-		
+
 		return instance;
 	}
 
