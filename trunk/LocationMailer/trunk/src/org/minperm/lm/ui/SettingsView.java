@@ -122,7 +122,7 @@ public class SettingsView extends LinearLayout {
 		AlarmManager am = (AlarmManager) getContext().getSystemService(
 				Activity.ALARM_SERVICE);
 		am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime,
-				60 * 1000, mAlarmSender);
+				LmContainer.getInstance().getUpdateInterval(), mAlarmSender);
 
 		// Tell the user about what we did.
 		Toast.makeText(getContext(), "Began sending location updates",
