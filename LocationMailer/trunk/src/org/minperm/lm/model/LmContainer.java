@@ -9,6 +9,8 @@ public class LmContainer {
 
 	private String updateEmailAddress;
 
+	private String emailPassword;
+
 	private Location location;
 
 	private static LmContainer instance;
@@ -20,7 +22,6 @@ public class LmContainer {
 	public static LmContainer getInstance() {
 		if (instance == null) {
 			instance = SettingsDao.getInstance().getLmContainer();
-			instance.setUpdateEmailAddress("victor.semenov@gmail.com");
 		}
 
 		return instance;
@@ -56,5 +57,13 @@ public class LmContainer {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public String getEmailPassword() {
+		return emailPassword;
+	}
+
+	public void setEmailPassword(String emailPassword) {
+		this.emailPassword = emailPassword;
 	}
 }

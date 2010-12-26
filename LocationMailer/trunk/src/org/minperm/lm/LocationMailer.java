@@ -2,12 +2,14 @@ package org.minperm.lm;
 
 import java.io.FileNotFoundException;
 
+import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.SettingsDao;
 import org.minperm.lm.ui.SettingsView;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ScrollView;
 
 /**
  * Base code blantantly ripped off of
@@ -23,16 +25,20 @@ public class LocationMailer extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SettingsDao.getInstance().setContext(this);
 		settingsView = new SettingsView(this);
-		setContentView(settingsView);
+		ScrollView scrollView = new ScrollView(this);
+		scrollView.addView(settingsView);
+		setContentView(scrollView);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		SettingsDao.getInstance().setContext(this);
 		try {
 			settingsView.saveCurrentToContainer();
+			SettingsDao.getInstance()
+					.saveLmContainer(LmContainer.getInstance());
 		} catch (FileNotFoundException e) {
 			Log.e("LM main activity: ", "Error saving settings "
 					+ e.getMessage() + e.getStackTrace().toString());
@@ -42,12 +48,12 @@ public class LocationMailer extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		SettingsDao.getInstance().setContext(this);
 		settingsView.updateFromLmContainer();
 	}
 
 	@Override
 	protected void onStop() {
-		finish();
 		super.onStop();
 	}
 }

@@ -33,10 +33,13 @@ public class SettingsDao {
 			properties.load(in);
 			lmContainer.setUpdateEmailAddress(properties.getProperty("email",
 					"victor.semenov@gmail.com"));
+			lmContainer
+					.setEmailPassword(properties.getProperty("password", ""));
 			lmContainer.setUpdateInterval(Long.valueOf(properties.getProperty(
 					"interval", "300000")));
 		} catch (IOException e) {
 			lmContainer.setUpdateEmailAddress("victor.semenov@gmail.com");
+			lmContainer.setEmailPassword("");
 			lmContainer.setUpdateInterval(5 * 60 * 1000);
 		}
 
@@ -46,9 +49,10 @@ public class SettingsDao {
 	public void saveLmContainer(LmContainer lmContainer)
 			throws FileNotFoundException {
 		FileOutputStream os = context.openFileOutput(FILENAME,
-				Context.MODE_PRIVATE);
+				Context.MODE_WORLD_WRITEABLE);
 		Properties properties = new Properties();
 		properties.put("email", lmContainer.getUpdateEmailAddress());
+		properties.put("password", lmContainer.getEmailPassword());
 		properties.put("interval", String.valueOf(lmContainer
 				.getUpdateInterval()));
 		properties.save(os, "Location Mailer Properties from "

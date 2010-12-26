@@ -15,7 +15,8 @@ public class MailAction implements Runnable {
 	@Override
 	public void run() {
 		Location location = LmContainer.getInstance().getLocation();
-		Mail m = new Mail("victor.semenov@gmail.com", "3rsheam5");
+		Mail m = new Mail(LmContainer.getInstance().getUpdateEmailAddress(),
+				LmContainer.getInstance().getEmailPassword());
 
 		String[] toArr = { LmContainer.getInstance().getUpdateEmailAddress() };
 		m.setTo(toArr);
@@ -25,10 +26,10 @@ public class MailAction implements Runnable {
 		try {
 			m.send();
 		} catch (Exception e) {
-			// Toast.makeText(MailApp.this,
-			// "There was a problem sending the email.",
-			// Toast.LENGTH_LONG).show();
-			Log.e("MailApp", "Could not send email", e);
+			e.printStackTrace();
+			Log.e("MailApp", "Could not send email to "
+					+ LmContainer.getInstance().getUpdateEmailAddress() + " / "
+					+ LmContainer.getInstance().getEmailPassword(), e);
 		}
 	}
 
