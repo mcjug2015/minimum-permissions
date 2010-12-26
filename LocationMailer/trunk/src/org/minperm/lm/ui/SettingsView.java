@@ -124,7 +124,7 @@ public class SettingsView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 				saveCurrentToContainer();
-				new MailAction().run();
+				new MailAction(getContext()).run();
 			}
 		});
 		ll.addView(button);
