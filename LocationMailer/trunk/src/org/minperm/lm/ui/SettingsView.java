@@ -123,8 +123,17 @@ public class SettingsView extends LinearLayout {
 
 			@Override
 			public void onClick(View v) {
-				saveCurrentToContainer();
-				new MailAction(getContext()).run();
+				try {
+					saveCurrentToContainer();
+					new MailAction(getContext()).run();
+				} catch (Exception e) {
+					Toast.makeText(
+							getContext(),
+							"Error! " + e.toString() + " "
+									+ e.getStackTrace()[0].toString(),
+							Toast.LENGTH_LONG).show();
+				}
+
 			}
 		});
 		ll.addView(button);
