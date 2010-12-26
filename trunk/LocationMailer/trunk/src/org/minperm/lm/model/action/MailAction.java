@@ -67,7 +67,7 @@ public class MailAction implements Runnable {
 			for (Address address : addresses) {
 				bodySb.append("Approx Address: " + address.toString() + "\n");
 			}
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			bodySb.append("Could not convert location to an address\n");
 		}
 		return bodySb.toString();
