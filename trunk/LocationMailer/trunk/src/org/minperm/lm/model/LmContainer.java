@@ -1,6 +1,7 @@
 package org.minperm.lm.model;
 
 import android.location.Location;
+import android.location.LocationManager;
 
 public class LmContainer {
 	private long lastUpdateDate;
@@ -51,12 +52,18 @@ public class LmContainer {
 		this.updateEmailAddress = updateEmailAddress;
 	}
 
-	public Location getLocation() {
-		return location;
-	}
+	public Location getLocation(Object locationManager) {
+		Location retval = null;
+		LocationManager lm = (LocationManager) locationManager;
+		if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		} else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		} else if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+			retval = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		}
 
-	public void setLocation(Location location) {
-		this.location = location;
+		return retval;
 	}
 
 	public String getEmailPassword() {

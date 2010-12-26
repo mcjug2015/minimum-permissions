@@ -32,26 +32,11 @@ public class BootDemoService extends Service {
 	 */
 	Runnable mTask = new Runnable() {
 		public void run() {
-			LmContainer.getInstance().setLocation(getBestLocation());
-			new MailAction().run();
+			new MailAction(getBaseContext()).run();
 			// Done with our work... stop the service!
 			BootDemoService.this.stopSelf();
 		}
 	};
-
-	public Location getBestLocation() {
-		Location retval = null;
-		LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			retval = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		} else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-			retval = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		} else if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-			retval = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-		}
-
-		return retval;
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {

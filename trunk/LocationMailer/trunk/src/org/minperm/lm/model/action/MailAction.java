@@ -6,15 +6,23 @@ import java.util.List;
 import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.Mail;
 
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
 
 public class MailAction implements Runnable {
+	private Context context;
+
+	public MailAction(Context context) {
+		this.context = context;
+	}
+
 	@Override
 	public void run() {
-		Location location = LmContainer.getInstance().getLocation();
+		Location location = LmContainer.getInstance().getLocation(
+				context.getSystemService(Context.LOCATION_SERVICE));
 		Mail m = new Mail(LmContainer.getInstance().getUpdateEmailAddress(),
 				LmContainer.getInstance().getEmailPassword());
 
