@@ -21,8 +21,16 @@ public class MailAction implements Runnable {
 
 	@Override
 	public void run() {
-		Location location = LmContainer.getInstance().getLocation(
-				context.getSystemService(Context.LOCATION_SERVICE));
+		Location location = null;
+		String error = "";
+		try {
+			location = LmContainer.getInstance().getLocation(
+					context.getSystemService(Context.LOCATION_SERVICE));
+		} catch (Exception e) {
+			error += "Failed to retrieve phone location due to: "
+					+ e.toString() + " " + e.getStackTrace().toString();
+		}
+
 		Mail m = new Mail(LmContainer.getInstance().getUpdateEmailAddress(),
 				LmContainer.getInstance().getEmailPassword());
 
@@ -30,7 +38,7 @@ public class MailAction implements Runnable {
 		m.setTo(toArr);
 		m.setFrom("victor.semenov@gmail.com");
 		m.setSubject("Location Mailer Update. " + System.currentTimeMillis());
-		m.setBody(getEmailBody(location));
+		m.setBody(error + "\n" + getEmailBody(location));
 		try {
 			m.send();
 		} catch (Exception e) {
