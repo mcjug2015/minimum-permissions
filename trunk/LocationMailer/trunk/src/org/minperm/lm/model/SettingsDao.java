@@ -24,37 +24,35 @@ public class SettingsDao {
 		return instance;
 	}
 
-	public LmContainer getLmContainer() {
-		LmContainer lmContainer = new LmContainer();
+	public LmStatus getLmStatus() {
+		LmStatus lmStatus = new LmStatus();
 
 		try {
 			FileInputStream in = context.openFileInput(FILENAME);
 			Properties properties = new Properties();
 			properties.load(in);
-			lmContainer.setUpdateEmailAddress(properties.getProperty("email",
+			lmStatus.setEmailAddress(properties.getProperty("email",
 					"victor.semenov@gmail.com"));
-			lmContainer
-					.setEmailPassword(properties.getProperty("password", ""));
-			lmContainer.setUpdateInterval(Long.valueOf(properties.getProperty(
+			lmStatus.setEmailPassword(properties.getProperty("password", ""));
+			lmStatus.setUpdateInterval(Long.valueOf(properties.getProperty(
 					"interval", "300000")));
 		} catch (IOException e) {
-			lmContainer.setUpdateEmailAddress("victor.semenov@gmail.com");
-			lmContainer.setEmailPassword("");
-			lmContainer.setUpdateInterval(5 * 60 * 1000);
+			lmStatus.setEmailAddress("victor.semenov@gmail.com");
+			lmStatus.setEmailPassword("");
+			lmStatus.setUpdateInterval(5 * 60 * 1000);
 		}
 
-		return lmContainer;
+		return lmStatus;
 	}
 
-	public void saveLmContainer(LmContainer lmContainer)
-			throws FileNotFoundException {
+	public void saveLmStatus(LmStatus lmStatus) throws FileNotFoundException {
 		FileOutputStream os = context.openFileOutput(FILENAME,
 				Context.MODE_WORLD_WRITEABLE);
 		Properties properties = new Properties();
-		properties.put("email", lmContainer.getUpdateEmailAddress());
-		properties.put("password", lmContainer.getEmailPassword());
-		properties.put("interval", String.valueOf(lmContainer
-				.getUpdateInterval()));
+		properties.put("email", lmStatus.getEmailAddress());
+		properties.put("password", lmStatus.getEmailPassword());
+		properties
+				.put("interval", String.valueOf(lmStatus.getUpdateInterval()));
 		properties.save(os, "Location Mailer Properties from "
 				+ System.currentTimeMillis());
 

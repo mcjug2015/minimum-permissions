@@ -82,8 +82,8 @@ public class SettingsView extends LinearLayout {
 			public void onClick(View v) {
 				saveCurrentToContainer();
 				try {
-					SettingsDao.getInstance().saveLmContainer(
-							LmContainer.getInstance());
+					SettingsDao.getInstance().saveLmStatus(
+							LmContainer.getInstance().getLmStatus());
 				} catch (FileNotFoundException e) {
 					Log.e("LM settingsview: ", "Error saving settings "
 							+ e.getMessage() + e.getStackTrace().toString());
