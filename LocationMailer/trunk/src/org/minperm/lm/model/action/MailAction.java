@@ -1,6 +1,5 @@
 package org.minperm.lm.model.action;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.minperm.lm.model.LmContainer;
@@ -59,8 +58,10 @@ public class MailAction implements Runnable {
 		bodySb.append("Latitude: " + location.getLatitude() + "\n");
 		bodySb.append("Longtitude: " + location.getLongitude() + "\n");
 		bodySb.append("Altitude: " + location.getAltitude() + "\n");
+		bodySb.append("Google maps url: http://maps.google.com/?daddr="
+				+ location.getLatitude() + "," + location.getLongitude());
 		bodySb.append("Location accuracy: " + location.getAccuracy() + "\n");
-		Geocoder gc = null;
+		Geocoder gc = new Geocoder(context);
 		try {
 			List<Address> addresses = gc.getFromLocation(
 					location.getLatitude(), location.getLongitude(), 3);

@@ -4,52 +4,46 @@ import android.location.Location;
 import android.location.LocationManager;
 
 public class LmContainer {
-	private long lastUpdateDate;
 
-	private long updateInterval;
-
-	private String updateEmailAddress;
-
-	private String emailPassword;
-
-	private Location location;
+	private LmStatus lmStatus;
 
 	private static LmContainer instance;
 
-	LmContainer() {
+	private LmContainer() {
 
 	}
 
 	public static LmContainer getInstance() {
 		if (instance == null) {
-			instance = SettingsDao.getInstance().getLmContainer();
+			instance = new LmContainer();
+			instance.lmStatus = SettingsDao.getInstance().getLmStatus();
 		}
 
 		return instance;
 	}
 
 	public long getLastUpdateDate() {
-		return lastUpdateDate;
+		return lmStatus.getLastUpdateDate();
 	}
 
 	public void setLastUpdateDate(long lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
+		lmStatus.setLastUpdateDate(lastUpdateDate);
 	}
 
 	public long getUpdateInterval() {
-		return updateInterval;
+		return lmStatus.getUpdateInterval();
 	}
 
 	public void setUpdateInterval(long updateInterval) {
-		this.updateInterval = updateInterval;
+		lmStatus.setUpdateInterval(updateInterval);
 	}
 
 	public String getUpdateEmailAddress() {
-		return updateEmailAddress;
+		return lmStatus.getEmailAddress();
 	}
 
 	public void setUpdateEmailAddress(String updateEmailAddress) {
-		this.updateEmailAddress = updateEmailAddress;
+		lmStatus.setEmailAddress(updateEmailAddress);
 	}
 
 	public Location getLocation(Object locationManager) {
@@ -67,10 +61,15 @@ public class LmContainer {
 	}
 
 	public String getEmailPassword() {
-		return emailPassword;
+		return lmStatus.getEmailPassword();
 	}
 
 	public void setEmailPassword(String emailPassword) {
-		this.emailPassword = emailPassword;
+		lmStatus.setEmailPassword(emailPassword);
 	}
+
+	public LmStatus getLmStatus() {
+		return lmStatus;
+	}
+	
 }

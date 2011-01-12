@@ -37,8 +37,8 @@ public class LocationMailer extends Activity {
 		SettingsDao.getInstance().setContext(this);
 		try {
 			settingsView.saveCurrentToContainer();
-			SettingsDao.getInstance()
-					.saveLmContainer(LmContainer.getInstance());
+			SettingsDao.getInstance().saveLmStatus(
+					LmContainer.getInstance().getLmStatus());
 		} catch (FileNotFoundException e) {
 			Log.e("LM main activity: ", "Error saving settings "
 					+ e.getMessage() + e.getStackTrace().toString());
