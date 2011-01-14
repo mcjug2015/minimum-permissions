@@ -6,8 +6,6 @@ import org.minperm.lm.model.action.MailAction;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -32,11 +30,31 @@ public class BootDemoService extends Service {
 	 */
 	Runnable mTask = new Runnable() {
 		public void run() {
-			new MailAction(getBaseContext()).run();
+			if (LmContainer.getInstance().getLmStatus().isSendingUpdates()) {
+				if (isConnectionAvailable() && isLocationAvailable()) {
+					new MailAction(getBaseContext()).run();
+					LmContainer.getInstance().getLmStatus().setLastUpdateDate(
+							System.currentTimeMillis());
+					LmContainer.getInstance().getLmStatus()
+							.setFailedLastUpdate(false);
+				} else {
+					LmContainer.getInstance().getLmStatus()
+							.setFailedLastUpdate(true);
+				}
+			}
+
 			// Done with our work... stop the service!
 			BootDemoService.this.stopSelf();
 		}
 	};
+
+	private boolean isLocationAvailable() {
+		return true;
+	}
+
+	private boolean isConnectionAvailable() {
+		return true;
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
