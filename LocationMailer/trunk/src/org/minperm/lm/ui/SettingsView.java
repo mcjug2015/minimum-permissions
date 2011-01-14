@@ -107,6 +107,7 @@ public class SettingsView extends LinearLayout {
 
 			@Override
 			public void onClick(View v) {
+				LmContainer.getInstance().getLmStatus().setSendingUpdates(true);
 				try {
 					startRepeatingAlarm();
 				} catch (FileNotFoundException e) {
@@ -145,6 +146,8 @@ public class SettingsView extends LinearLayout {
 
 			@Override
 			public void onClick(View v) {
+				LmContainer.getInstance().getLmStatus()
+						.setSendingUpdates(false);
 				stopRepeatingAlarm();
 			}
 		});

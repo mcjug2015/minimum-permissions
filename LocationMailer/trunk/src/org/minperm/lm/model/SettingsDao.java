@@ -10,6 +10,12 @@ import android.content.Context;
 
 public class SettingsDao {
 	private String FILENAME = "settings_file";
+	private static String emailPropertyName = "email";
+	private static String passwordPropertyName = "password";
+	private static String lastUpdateDatePropertyName = "last_update_date";
+	private static String updateIntervalPropertyName = "interval";
+	private static String failedLastUpdatePropertyName = "failed_last_update";
+	private static String sendingUpdatesPropertyName = "sending_updates";
 	private static SettingsDao instance;
 	Context context;
 
@@ -31,15 +37,25 @@ public class SettingsDao {
 			FileInputStream in = context.openFileInput(FILENAME);
 			Properties properties = new Properties();
 			properties.load(in);
-			lmStatus.setEmailAddress(properties.getProperty("email",
+			lmStatus.setEmailAddress(properties.getProperty(emailPropertyName,
 					"victor.semenov@gmail.com"));
-			lmStatus.setEmailPassword(properties.getProperty("password", ""));
+			lmStatus.setEmailPassword(properties.getProperty(
+					passwordPropertyName, ""));
 			lmStatus.setUpdateInterval(Long.valueOf(properties.getProperty(
-					"interval", "300000")));
+					updateIntervalPropertyName, "300000")));
+			lmStatus.setLastUpdateDate(Long.valueOf(properties.getProperty(
+					lastUpdateDatePropertyName, "0")));
+			lmStatus.setFailedLastUpdate(Boolean.valueOf(properties
+					.getProperty(failedLastUpdatePropertyName, "false")));
+			lmStatus.setSendingUpdates(Boolean.valueOf(properties.getProperty(
+					sendingUpdatesPropertyName, "false")));
 		} catch (IOException e) {
 			lmStatus.setEmailAddress("victor.semenov@gmail.com");
 			lmStatus.setEmailPassword("");
 			lmStatus.setUpdateInterval(5 * 60 * 1000);
+			lmStatus.setLastUpdateDate(0);
+			lmStatus.setFailedLastUpdate(false);
+			lmStatus.setSendingUpdates(false);
 		}
 
 		return lmStatus;
@@ -49,10 +65,16 @@ public class SettingsDao {
 		FileOutputStream os = context.openFileOutput(FILENAME,
 				Context.MODE_WORLD_WRITEABLE);
 		Properties properties = new Properties();
-		properties.put("email", lmStatus.getEmailAddress());
-		properties.put("password", lmStatus.getEmailPassword());
-		properties
-				.put("interval", String.valueOf(lmStatus.getUpdateInterval()));
+		properties.put(emailPropertyName, lmStatus.getEmailAddress());
+		properties.put(passwordPropertyName, lmStatus.getEmailPassword());
+		properties.put(updateIntervalPropertyName, String.valueOf(lmStatus
+				.getUpdateInterval()));
+		properties.put(lastUpdateDatePropertyName, String.valueOf(lmStatus
+				.getLastUpdateDate()));
+		properties.put(failedLastUpdatePropertyName, String.valueOf(lmStatus
+				.isFailedLastUpdate()));
+		properties.put(sendingUpdatesPropertyName, String.valueOf(lmStatus
+				.isSendingUpdates()));
 		properties.save(os, "Location Mailer Properties from "
 				+ System.currentTimeMillis());
 
