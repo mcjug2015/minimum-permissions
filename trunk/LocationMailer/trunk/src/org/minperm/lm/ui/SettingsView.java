@@ -2,7 +2,7 @@ package org.minperm.lm.ui;
 
 import java.io.FileNotFoundException;
 
-import org.minperm.lm.BootDemoService;
+import org.minperm.lm.LmUpdateService;
 import org.minperm.lm.R;
 import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.SettingsDao;
@@ -13,11 +13,11 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -36,11 +36,12 @@ public class SettingsView extends LinearLayout {
 	private RadioButton daily;
 	private RadioButton twelveHours;
 	private Button setSettingsButton;
+	private CheckBox sendingUpdatesCb;
 
 	public SettingsView(Context context) {
 		super(context);
 		mAlarmSender = PendingIntent.getService(getContext(), 0, new Intent(
-				getContext(), BootDemoService.class), 0);
+				getContext(), LmUpdateService.class), 0);
 		initUi();
 	}
 
@@ -101,24 +102,40 @@ public class SettingsView extends LinearLayout {
 
 		LinearLayout ll = new LinearLayout(getContext());
 		ll.setOrientation(HORIZONTAL);
-		Button button = new Button(getContext());
-		button.setText("Start Alarm");
-		button.setOnClickListener(new OnClickListener() {
+
+		sendingUpdatesCb = new CheckBox(getContext());
+		sendingUpdatesCb.setText("Send Updates");
+		sendingUpdatesCb.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				LmContainer.getInstance().getLmStatus().setSendingUpdates(true);
-				try {
-					startRepeatingAlarm();
-				} catch (FileNotFoundException e) {
-					Log.e("LM main activity: ", "Error saving settings "
-							+ e.getMessage() + e.getStackTrace().toString());
-					e.printStackTrace();
+				CheckBox currentSUCb = (CheckBox) v;
+				if (currentSUCb.isChecked()
+						&& LmContainer.getInstance().getLmStatus()
+								.isSendingUpdates() == false) {
+					LmContainer.getInstance().getLmStatus().setSendingUpdates(
+							true);
+					try {
+						startRepeatingAlarm();
+					} catch (FileNotFoundException e) {
+						Log
+								.e("LM main activity: ",
+										"Error saving settings "
+												+ e.getMessage()
+												+ e.getStackTrace().toString());
+						e.printStackTrace();
+					}
+				} else if (LmContainer.getInstance().getLmStatus()
+						.isSendingUpdates()) {
+					LmContainer.getInstance().getLmStatus().setSendingUpdates(
+							false);
+					stopRepeatingAlarm();
 				}
 			}
 		});
-		ll.addView(button);
-		button = new Button(getContext());
+		ll.addView(sendingUpdatesCb);
+
+		Button button = new Button(getContext());
 		button.setText("Send Location");
 		button.setOnClickListener(new OnClickListener() {
 
@@ -139,30 +156,16 @@ public class SettingsView extends LinearLayout {
 		});
 		ll.addView(button);
 		addView(ll);
-
-		button = new Button(getContext());
-		button.setText("Stop alarm");
-		button.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				LmContainer.getInstance().getLmStatus()
-						.setSendingUpdates(false);
-				stopRepeatingAlarm();
-			}
-		});
-		addView(button);
 	}
 
 	public void startRepeatingAlarm() throws FileNotFoundException {
 		saveCurrentToContainer();
-		long firstTime = SystemClock.elapsedRealtime();
 
 		// Schedule the alarm!
 		AlarmManager am = (AlarmManager) getContext().getSystemService(
 				Activity.ALARM_SERVICE);
-		am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime,
-				LmContainer.getInstance().getUpdateInterval(), mAlarmSender);
+		am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, LmContainer
+				.getInstance().getUpdateInterval(), mAlarmSender);
 
 		// Tell the user about what we did.
 		Toast.makeText(getContext(), "Began sending location updates",
@@ -195,6 +198,9 @@ public class SettingsView extends LinearLayout {
 		emailTextView
 				.setText(LmContainer.getInstance().getUpdateEmailAddress());
 		passwordTextView.setText(LmContainer.getInstance().getEmailPassword());
+
+		sendingUpdatesCb.setChecked(LmContainer.getInstance().getLmStatus()
+				.isSendingUpdates());
 	}
 
 	public void saveCurrentToContainer() {

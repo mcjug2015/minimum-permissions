@@ -59,7 +59,7 @@ public class MailAction implements Runnable {
 		bodySb.append("Longtitude: " + location.getLongitude() + "\n");
 		bodySb.append("Altitude: " + location.getAltitude() + "\n");
 		bodySb.append("Google maps url: http://maps.google.com/?daddr="
-				+ location.getLatitude() + "," + location.getLongitude());
+				+ location.getLatitude() + "," + location.getLongitude() + "\n");
 		bodySb.append("Location accuracy: " + location.getAccuracy() + "\n");
 		Geocoder gc = new Geocoder(context);
 		try {

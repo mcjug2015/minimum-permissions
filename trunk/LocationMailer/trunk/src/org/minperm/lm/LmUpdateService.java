@@ -19,11 +19,11 @@ import android.util.Log;
  * @author BMB
  * 
  */
-public class BootDemoService extends Service {
+public class LmUpdateService extends Service {
 	/**
 	 * Log tag for this service.
 	 */
-	private final String LOGTAG = "BootDemoService";
+	private final String LOGTAG = "LmUpdateService";
 
 	/**
 	 * The function that runs in our worker thread
@@ -31,10 +31,11 @@ public class BootDemoService extends Service {
 	Runnable mTask = new Runnable() {
 		public void run() {
 			if (LmContainer.getInstance().getLmStatus().isSendingUpdates()) {
+				long curTime = System.currentTimeMillis();
+				LmContainer.getInstance().getLmStatus().setLastUpdateDate(
+						curTime);
 				if (isConnectionAvailable() && isLocationAvailable()) {
 					new MailAction(getBaseContext()).run();
-					LmContainer.getInstance().getLmStatus().setLastUpdateDate(
-							System.currentTimeMillis());
 					LmContainer.getInstance().getLmStatus()
 							.setFailedLastUpdate(false);
 				} else {
@@ -44,7 +45,7 @@ public class BootDemoService extends Service {
 			}
 
 			// Done with our work... stop the service!
-			BootDemoService.this.stopSelf();
+			LmUpdateService.this.stopSelf();
 		}
 	};
 
