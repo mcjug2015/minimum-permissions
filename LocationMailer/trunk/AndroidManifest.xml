@@ -6,13 +6,13 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:enabled="true" android:persistent="true" android:debuggable="true"
 		android:allowClearUserData="true">
-		<service android:name=".BootDemoService">
+		<service android:name=".LmUpdateService">
             <intent-filter>
-                <action android:name="org.minperm.lm.BootDemoService">
+                <action android:name="org.minperm.lm.LmUpdateService">
                 </action>
             </intent-filter>
         </service>
-        <receiver android:name=".BootDemoReceiver">
+        <receiver android:name=".LmBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED">
                 </action>

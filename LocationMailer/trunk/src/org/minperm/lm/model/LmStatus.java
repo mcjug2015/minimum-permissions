@@ -8,14 +8,16 @@ public class LmStatus {
 	private String emailPassword;
 	private boolean failedLastUpdate;
 	private boolean sendingUpdates;
-
-	public LmStatus(long updateInterval, long lastUpdateDate,
-			String emailAddress, String emailPassword, boolean failedLastUpdate) {
+	
+	public LmStatus(long updateInterval, long lastUpdateDate, String emailAddress,
+			String emailPassword, boolean failedLastUpdate,
+			boolean sendingUpdates) {
 		this.updateInterval = updateInterval;
 		this.lastUpdateDate = lastUpdateDate;
 		this.emailAddress = emailAddress;
 		this.emailPassword = emailPassword;
 		this.failedLastUpdate = failedLastUpdate;
+		this.sendingUpdates = sendingUpdates;
 	}
 
 	public LmStatus() {
@@ -69,6 +71,4 @@ public class LmStatus {
 	public void setSendingUpdates(boolean sendingUpdates) {
 		this.sendingUpdates = sendingUpdates;
 	}
-
-	
 }
