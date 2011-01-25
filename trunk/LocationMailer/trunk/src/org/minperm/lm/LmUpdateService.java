@@ -1,5 +1,7 @@
 package org.minperm.lm;
 
+import java.io.FileNotFoundException;
+
 import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.SettingsDao;
 import org.minperm.lm.model.action.MailAction;
@@ -41,6 +43,15 @@ public class LmUpdateService extends Service {
 				} else {
 					LmContainer.getInstance().getLmStatus()
 							.setFailedLastUpdate(true);
+				}
+				// if the failedlastupdate changed we gotta save the
+				// settings
+				try {
+					SettingsDao.getInstance().saveLmStatus(
+							LmContainer.getInstance().getLmStatus());
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 
