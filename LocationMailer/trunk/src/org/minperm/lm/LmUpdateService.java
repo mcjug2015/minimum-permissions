@@ -37,7 +37,7 @@ public class LmUpdateService extends Service {
 				LmContainer.getInstance().getLmStatus().setLastUpdateDate(
 						curTime);
 				if (isConnectionAvailable() && isLocationAvailable()) {
-					new MailAction(getBaseContext()).run();
+					new MailAction(LmUpdateService.this).run();
 					LmContainer.getInstance().getLmStatus()
 							.setFailedLastUpdate(false);
 				} else {
