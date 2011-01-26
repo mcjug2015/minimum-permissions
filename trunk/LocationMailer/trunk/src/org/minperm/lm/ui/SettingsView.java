@@ -13,6 +13,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
@@ -110,6 +111,7 @@ public class SettingsView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 				CheckBox currentSUCb = (CheckBox) v;
+				saveCurrentToContainer();
 				if (currentSUCb.isChecked()
 						&& LmContainer.getInstance().getLmStatus()
 								.isSendingUpdates() == false) {
