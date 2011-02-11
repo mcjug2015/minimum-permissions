@@ -14,20 +14,28 @@ import android.util.Log;
 public class MailAction implements Runnable {
 	private Context context;
 
+	private Location location;
+
 	public MailAction(Context context) {
 		this.context = context;
 	}
 
+	public MailAction(Context context, Location location) {
+		this.context = context;
+		this.location = location;
+	}
+
 	@Override
 	public void run() {
-		Location location = null;
 		String error = "";
-		try {
-			location = LmContainer.getInstance().getLocation(
-					context.getSystemService(Context.LOCATION_SERVICE));
-		} catch (Exception e) {
-			error += "Failed to retrieve phone location due to: "
-					+ e.toString() + " " + e.getStackTrace().toString();
+		if (location == null) {
+			try {
+				location = LmContainer.getInstance().getLocation(
+						context.getSystemService(Context.LOCATION_SERVICE));
+			} catch (Exception e) {
+				error += "Failed to retrieve phone location due to: "
+						+ e.toString() + " " + e.getStackTrace().toString();
+			}
 		}
 
 		Mail m = new Mail(LmContainer.getInstance().getUpdateEmailAddress(),
@@ -58,8 +66,10 @@ public class MailAction implements Runnable {
 		bodySb.append("Latitude: " + location.getLatitude() + "\n");
 		bodySb.append("Longtitude: " + location.getLongitude() + "\n");
 		bodySb.append("Altitude: " + location.getAltitude() + "\n");
-		bodySb.append("Google maps url: http://maps.google.com/?daddr="
-				+ location.getLatitude() + "," + location.getLongitude() + "\n");
+		bodySb
+				.append("Google maps url: http://maps.google.com/?daddr="
+						+ location.getLatitude() + ","
+						+ location.getLongitude() + "\n");
 		bodySb.append("Location accuracy: " + location.getAccuracy() + "\n");
 		Geocoder gc = new Geocoder(context);
 		try {

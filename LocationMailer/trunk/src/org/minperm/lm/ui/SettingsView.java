@@ -2,6 +2,7 @@ package org.minperm.lm.ui;
 
 import java.io.FileNotFoundException;
 
+import org.minperm.lm.LmService;
 import org.minperm.lm.LmUpdateService;
 import org.minperm.lm.R;
 import org.minperm.lm.model.LmContainer;
@@ -13,7 +14,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
@@ -112,26 +112,27 @@ public class SettingsView extends LinearLayout {
 			public void onClick(View v) {
 				CheckBox currentSUCb = (CheckBox) v;
 				saveCurrentToContainer();
-				if (currentSUCb.isChecked()
-						&& LmContainer.getInstance().getLmStatus()
-								.isSendingUpdates() == false) {
-					LmContainer.getInstance().getLmStatus().setSendingUpdates(
-							true);
-					try {
-						startRepeatingAlarm();
-					} catch (FileNotFoundException e) {
-						Log
-								.e("LM main activity: ",
-										"Error saving settings "
-												+ e.getMessage()
-												+ e.getStackTrace().toString());
-						e.printStackTrace();
-					}
-				} else if (LmContainer.getInstance().getLmStatus()
-						.isSendingUpdates()) {
-					LmContainer.getInstance().getLmStatus().setSendingUpdates(
-							false);
-					stopRepeatingAlarm();
+				LmContainer.getInstance().getLmStatus().setSendingUpdates(
+						currentSUCb.isChecked());
+				try {
+					SettingsDao.getInstance().saveLmStatus(
+							LmContainer.getInstance().getLmStatus());
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				if (currentSUCb.isChecked()) {
+
+					Intent intent = new Intent(getContext(), LmService.class);
+					getContext().startService(intent);
+				} else {
+					PendingIntent mAlarmSender = PendingIntent.getService(
+							getContext(), 0, new Intent(getContext(),
+									LmUpdateService.class), 0);
+					AlarmManager am = (AlarmManager) getContext()
+							.getSystemService(Activity.ALARM_SERVICE);
+					am.cancel(mAlarmSender);
 				}
 			}
 		});
@@ -158,31 +159,6 @@ public class SettingsView extends LinearLayout {
 		});
 		ll.addView(button);
 		addView(ll);
-	}
-
-	public void startRepeatingAlarm() throws FileNotFoundException {
-		saveCurrentToContainer();
-
-		// Schedule the alarm!
-		AlarmManager am = (AlarmManager) getContext().getSystemService(
-				Activity.ALARM_SERVICE);
-		am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, LmContainer
-				.getInstance().getUpdateInterval(), mAlarmSender);
-
-		// Tell the user about what we did.
-		Toast.makeText(getContext(), "Began sending location updates",
-				Toast.LENGTH_LONG).show();
-	}
-
-	public void stopRepeatingAlarm() {
-		// And cancel the alarm.
-		AlarmManager am = (AlarmManager) getContext().getSystemService(
-				Activity.ALARM_SERVICE);
-		am.cancel(mAlarmSender);
-
-		// Tell the user about what we did.
-		Toast.makeText(getContext(), "Stopped sending location updates",
-				Toast.LENGTH_LONG).show();
 	}
 
 	public void updateFromLmContainer() {

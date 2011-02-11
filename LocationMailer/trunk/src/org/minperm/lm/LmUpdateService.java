@@ -1,14 +1,17 @@
 package org.minperm.lm;
 
-import java.io.FileNotFoundException;
-
 import org.minperm.lm.model.LmContainer;
 import org.minperm.lm.model.SettingsDao;
 import org.minperm.lm.model.action.MailAction;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
@@ -27,38 +30,19 @@ public class LmUpdateService extends Service {
 	 */
 	private final String LOGTAG = "LmUpdateService";
 
-	/**
-	 * The function that runs in our worker thread
-	 */
-	Runnable mTask = new Runnable() {
-		public void run() {
-			if (LmContainer.getInstance().getLmStatus().isSendingUpdates()) {
-				long curTime = System.currentTimeMillis();
-				LmContainer.getInstance().getLmStatus().setLastUpdateDate(
-						curTime);
-				if (isConnectionAvailable() && isLocationAvailable()) {
-					new MailAction(LmUpdateService.this).run();
-					LmContainer.getInstance().getLmStatus()
-							.setFailedLastUpdate(false);
-				} else {
-					LmContainer.getInstance().getLmStatus()
-							.setFailedLastUpdate(true);
-				}
-				// if the failedlastupdate changed we gotta save the
-				// settings
-				try {
-					SettingsDao.getInstance().saveLmStatus(
-							LmContainer.getInstance().getLmStatus());
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+	private LocationManager locationManager;
 
-			// Done with our work... stop the service!
-			LmUpdateService.this.stopSelf();
-		}
-	};
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Log.i(LOGTAG, "created");
+		SettingsDao.getInstance().setContext(this);
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+				0, locationListener);
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+	}
 
 	private boolean isLocationAvailable() {
 		return true;
@@ -73,15 +57,6 @@ public class LmUpdateService extends Service {
 		return mBinder;
 	}
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.i(LOGTAG, "created");
-		SettingsDao.getInstance().setContext(this);
-		Thread thr = new Thread(null, mTask, "AlarmService_Service");
-		thr.start();
-	}
-
 	/**
 	 * This is the object that receives interactions from clients. See
 	 * RemoteService for a more complete example.
@@ -91,6 +66,36 @@ public class LmUpdateService extends Service {
 		protected boolean onTransact(int code, Parcel data, Parcel reply,
 				int flags) throws RemoteException {
 			return super.onTransact(code, data, reply, flags);
+		}
+	};
+
+	private LocationListener locationListener = new LocationListener() {
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onLocationChanged(Location location) {
+			new MailAction(LmUpdateService.this, location).run();
+			LmContainer.getInstance().getLmStatus().setFailedLastUpdate(false);
+			LmContainer.getInstance().getLmStatus().setLastUpdateDate(
+					System.currentTimeMillis());
+			locationManager.removeUpdates(this);
 		}
 	};
 }
