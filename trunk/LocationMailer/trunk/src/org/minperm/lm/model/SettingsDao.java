@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import android.content.Context;
+import android.util.Log;
 
 public class SettingsDao {
 	private String FILENAME = "settings_file";
@@ -62,8 +63,7 @@ public class SettingsDao {
 	}
 
 	public void saveLmStatus(LmStatus lmStatus) throws FileNotFoundException {
-		FileOutputStream os = context.openFileOutput(FILENAME,
-				Context.MODE_WORLD_WRITEABLE);
+		FileOutputStream os = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
 		Properties properties = new Properties();
 		properties.put(emailPropertyName, lmStatus.getEmailAddress());
 		properties.put(passwordPropertyName, lmStatus.getEmailPassword());
@@ -75,8 +75,14 @@ public class SettingsDao {
 				.isFailedLastUpdate()));
 		properties.put(sendingUpdatesPropertyName, String.valueOf(lmStatus
 				.isSendingUpdates()));
-		properties.save(os, "Location Mailer Properties from "
-				+ System.currentTimeMillis());
+		
+		try {
+			properties.store(os, "Location Mailer Properties from "
+					+ System.currentTimeMillis());
+		} catch (IOException e) {
+			Log.e("LM main activity: ", "Error saving settings "
+					+ e.getMessage() + e.getStackTrace().toString());
+		}
 
 	}
 
