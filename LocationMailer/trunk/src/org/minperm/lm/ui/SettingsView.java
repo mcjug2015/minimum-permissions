@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 public class SettingsView extends LinearLayout {
 
+	@SuppressWarnings("unused")
 	private PendingIntent mAlarmSender;
 	private TextView emailTextView;
 	private TextView passwordTextView;

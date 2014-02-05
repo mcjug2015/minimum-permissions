@@ -44,10 +44,12 @@ public class LmUpdateService extends Service {
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 	}
 
+	@SuppressWarnings("unused")
 	private boolean isLocationAvailable() {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean isConnectionAvailable() {
 		return true;
 	}
